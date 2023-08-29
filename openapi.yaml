@@ -268,7 +268,7 @@ paths:
             Selasa:
               description: Example filter by doctor's practice schedule Tuesday
               value: selasa
-        - name: startTime
+        - name: start_time
           description: It is used in collaboration with the endTime query to filter doctors by their practice schedule time range.
           required: false
           in: query
@@ -283,7 +283,7 @@ paths:
             '08:00':
               description: Example filter by start time at 08:00
               value: '08:00'
-        - name: endTime
+        - name: end_time
           description: It is used in collaboration with the startTime query to filter doctors by their practice schedule time range.
           required: false
           in: query
@@ -515,7 +515,7 @@ paths:
             dr. Andy Sugoro:
               description: Example doctor Id of dr. Andy Sugoro
               value: 1
-        - name: startDate
+        - name: start_date
           description: It is used in collaboration with the endDate query to filter doctor schedules by their practice schedule date range.
           required: true
           in: query
@@ -527,7 +527,7 @@ paths:
             '2023-08-29':
               description: Example filter by start date at 2023-08-29
               value: '2023-08-29'
-        - name: endDate
+        - name: end_date
           description: It is used in collaboration with the startDate query to filter doctors schedules by their practice schedule date range.
           required: true
           in: query
