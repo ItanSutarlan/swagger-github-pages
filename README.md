@@ -2,83 +2,41 @@
 
 Welcome to the API documentation for the Care Doctor Application. This guide outlines the API endpoints that use the HTTP GET method for making reservations.
 
-## Endpoints
+## Steps to manually configure in your own repository
 
-### 1. Get Total Points
+1. Download the latest stable release of the Swagger UI [here](https://github.com/swagger-api/swagger-ui/releases).
 
-- Endpoint: `/api/users/points`
-- Method: GET
-- Description: Get the total points of the user's account.
-- <img src="./images/home_page.jpg" alt="Total Points" width="200">
+2. Extract the contents and copy the "dist" directory to the root of your repository.
 
-### 2. Get Specializations and Sub Specializations
+3. Move the file "index.html" from the directory "dist" to the root of your repository.
+    ```
+    mv dist/index.html .
+    ```
+    
+4. Copy the YAML specification file for your API to the root of your repository.
 
-- Endpoint: `/api/specializations`
-- Method: GET
-- Query Parameters:
-  - `location`: Hospital location
-- Description: Get the list of specializations and sub specialization names based on the current hospital location.
-- <img src="./images/specialization_page.jpg" alt="Specializations" width="200">
+5. Edit [dist/swagger-initializer.js](dist/swagger-initializer.js) and change the `url` property to reference your local YAML file. 
+    ```javascript
+        window.ui = SwaggerUIBundle({
+            url: "swagger.yaml",
+        ...
+    ```
+    Then fix any references to files in the "dist" directory.
+    ```html
+    ...
+    <link rel="stylesheet" type="text/css" href="dist/swagger-ui.css" >
+    <link rel="icon" type="image/png" href="dist/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="dist/favicon-16x16.png" sizes="16x16" />    
+    ...
+    <script src="dist/swagger-ui-bundle.js"> </script>
+    <script src="dist/swagger-ui-standalone-preset.js"> </script>    
+    ...
+    ```
+    
+6. Go to the settings for your repository at `https://github.com/{github-username}/{repository-name}/settings` and enable GitHub Pages.
 
-### 3. Search for Doctors
+    ![Headers](/screenshots/swagger-github-pages.png?raw=true)
+    
+7. Browse to the Swagger documentation at `https://{github-username}.github.io/{repository-name}/`.
 
-- Endpoint: `/api/doctors`
-- Method: GET
-- Query Parameters:
-  - `location`: Hospital location
-  - `search`: Search term for doctor name, specialization name, or sub specialization name.
-- Description: Get a list of doctors based on the search criteria.
-- <img src="./images/search_page.jpg" alt="doctors" width="200">
-
-
-### 4. Filter Doctors
-
-- Endpoint: `/api/doctors`
-- Method: GET
-- Query Parameters:
-  - `specialization`: Specialization name
-  - `practice_day`: Practice day
-  - `practice_time_start`: Practice start time in the format "HH:mm"
-  - `practice_time_end`: Practice end time in the format "HH:mm"
-  - `booking_type`: Booking type
-  - `gender`: Doctor's gender
-- Description: Get a list of doctors based on various filter criteria.
-- <img src="./images/filter_page.jpg" alt="filtered doctors" width="200">
-
-### 5. Get Doctor's Practice Schedules
-
-- Endpoint: `/api/doctors/{doctor_id}/schedules`
-- Method: GET
-- Query Parameters:
-  - `start_date`: Start date in the format "YYYY-MM-DD"
-  - `end_date`: End date in the format "YYYY-MM-DD"
-- Description: Get the list of a doctor's schedules within a specified date range.
-- <img src="./images/doctor_schedule.jpg" alt="doctor schedules" width="200">
-
-### 6. Get Family Member Names
-
-- Endpoint: `/api/family-members`
-- Method: GET
-- Description: Get a list of family member names to be used as a patient when making a reservation.
-- <img src="./images/booking_page.jpg" alt="family members list" width="200">
-
-### 7. Get Bookings
-
-- Endpoint: `/api/bookings`
-- Method: GET
-- Description: Get a list of the user's bookings that are currently in progress.
-- <img src="./images/booking_list.jpg" alt="booking list" width="200">
-
-### 8. Get Detailed Booking Information
-
-- Endpoint: `/api/bookings/{booking_id}`
-- Method: GET
-- Description: Get detailed information about a specific booking ID.
-- <img src="./images/detail_booking.jpg" alt="booking detail" width="200">
-
-### 9. Get Booking History
-
-- Endpoint: `/api/bookings/histories`
-- Method: GET
-- Description: Get a list of booking histories for a specific user.
-- <img src="./images/history_page.jpg" alt="histories" width="200">
+   The example API specification used by this repository can be seen hosted at [https://itansutarlan.github.io/swagger-github-pages](https://itansutarlan.github.io/swagger-github-pages/).
