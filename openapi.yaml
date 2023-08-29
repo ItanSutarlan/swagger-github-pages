@@ -1,0 +1,812 @@
+openapi: 3.0.3
+info:
+  title: Care Doctor RESTful API
+  description: The API endpoints that use the HTTP GET methods for making reservations
+  version: '1'
+  contact:
+    name: Itan Sutarlan
+    email: itan030644@gmail.com
+paths:
+  /users/points:
+    get:
+      tags:
+        - User
+      summary: Get Total Points
+      description: Get the total points of the user's account
+      responses:
+        '200':
+          description: Get total points successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: User Id
+                  points:
+                    type: integer
+                    description: total points of the current user
+              examples:
+                success:
+                  description: Get total points of the current user successfully
+                  value:
+                    id: 1
+                    points: 0
+  /users/family-members:
+    get:
+      tags:
+        - User
+      summary: Get All Family Members
+      description: Get the list of all family members
+      responses:
+        '200':
+          description: Get family members successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: family member id
+                    fullName:
+                      type: string
+                      description: The name of the family member
+                    relationship:
+                      type: string
+                      description: The family member's relationship with the current user.
+              examples:
+                success:
+                  description: Get total points of the current user successfully
+                  value:
+                    - id: 1
+                      fullName: John Doe
+                      relationship: Lainnya
+  /hospitals:
+    get:
+      tags:
+        - Hospital
+      summary: Get All Hospitals
+      description: Get list of all hospital locations
+      responses:
+        '200':
+          description: Get list of all hospitals successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: Hospital Id
+                    name:
+                      type: string
+                      description: Hospital name
+                    location:
+                      type: string
+                      description: hospital location
+              examples:
+                success:
+                  description: Example success get all hospitals
+                  value:
+                    - id: 1
+                      name: Mandaya Royal Hospital Puri
+                      location: Jl. Metland Boulevard Lot. C-3 Metland Cyber City, Kota Tangerang, Indonesia
+                    - id: 2
+                      name: Mandaya Hospital Karawang
+                      location: Jl. Arterri Tol Karawang Barat, Kabupaten Karawang, Jawa Barat, Indonesia
+  /hospitals/{hospitalId}/specializations:
+    get:
+      tags:
+        - Hospital
+        - Specialization
+      summary: Get All Specializations
+      description: Get list of all specializations and sub specializations at a specific hospital location by default.
+      responses:
+        '200':
+          description: Get list of all specializations and sub specializations successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: Specialization Id
+                    name:
+                      type: string
+                      description: Specialization name
+              examples:
+                Puri Hospital:
+                  description: Example success get list of all Puri hospital specializations
+                  value:
+                    - id: 1
+                      name: Andrologi
+                Karawang Hospital:
+                  description: Example success get list of all Karawang hospital specializations
+                  value:
+                    - id: 2
+                      name: Anestesi
+      parameters:
+        - $ref: '#/components/parameters/hospitalId'
+  /hospitals/{hospitalId}/specializations/{specializationId}/doctors:
+    get:
+      tags:
+        - Hospital
+        - Specialization
+        - Doctor
+      summary: Get All Doctors based on specialization
+      description: Get list of all Doctors at a specific specialization.
+      responses:
+        '200':
+          description: Get list of all doctors at a specific specialization successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoctorList'
+              examples:
+                success:
+                  $ref: '#/components/examples/DoctorList'
+      parameters:
+        - $ref: '#/components/parameters/hospitalId'
+        - $ref: '#/components/parameters/specializationId'
+  /hospitals/{hospitalId}/doctors:
+    get:
+      tags:
+        - Hospital
+        - Doctor
+      summary: Get All Doctors
+      description: Get list of all Doctors at a specific hospital location by default.
+      responses:
+        '200':
+          description: Get list of all doctors at a specific specialization successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoctorList'
+              examples:
+                success:
+                  $ref: '#/components/examples/DoctorList'
+        '404':
+          description: Failed to get doctors not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              examples:
+                failed:
+                  description: failed to get doctors
+                  value:
+                    message: Doctor not found
+      parameters:
+        - $ref: '#/components/parameters/hospitalId'
+        - name: search
+          description: Search by doctor name, specialization name, or sub specialization name.
+          required: false
+          in: query
+          schema:
+            type: string
+            minLength: 2
+            maxLength: 100
+          examples:
+            Anak:
+              description: Example search by specialization name
+              value: anak
+            Andy:
+              description: Example search by doctor named dr. Andy sugoro
+              value: Andy
+  /hospitals/{hospitalId}/doctors/filter:
+    get:
+      tags:
+        - Hospital
+        - Doctor
+      summary: Get All Filtered Doctors
+      description: Get list of all Doctors at a specific hospital location by default.
+      responses:
+        '200':
+          description: Get list of all doctors at a specific specialization successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoctorList'
+              examples:
+                success:
+                  $ref: '#/components/examples/DoctorList'
+        '404':
+          description: Failed to get doctors not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              examples:
+                failed:
+                  description: failed to get doctors
+                  value:
+                    message: Doctor not found
+      parameters:
+        - $ref: '#/components/parameters/hospitalId'
+        - name: specialization
+          description: Filter by specialization name, or sub specialization name.
+          required: false
+          in: query
+          schema:
+            type: string
+            minLength: 2
+            maxLength: 100
+          examples:
+            Anak:
+              description: Example filter by specialization named Anak
+              value: anak
+            Mata:
+              description: Example filter by specialization named Mata
+              value: mata
+        - name: day
+          description: Filter by day of doctor's practice schedule.
+          required: false
+          in: query
+          schema:
+            type: string
+            minLength: 3
+            maxLength: 20
+          examples:
+            Senin:
+              description: Example filter by doctor's practice schedule Monday
+              value: senin
+            Selasa:
+              description: Example filter by doctor's practice schedule Tuesday
+              value: selasa
+        - name: start_time
+          description: It is used in collaboration with the endTime query to filter doctors by their practice schedule time range.
+          required: false
+          in: query
+          schema:
+            type: string
+            minLength: 4
+            maxLength: 20
+          examples:
+            '16:00':
+              description: Example filter by start time at 16:00
+              value: '16:00'
+            '08:00':
+              description: Example filter by start time at 08:00
+              value: '08:00'
+        - name: end_time
+          description: It is used in collaboration with the startTime query to filter doctors by their practice schedule time range.
+          required: false
+          in: query
+          schema:
+            type: string
+            minLength: 4
+            maxLength: 20
+          examples:
+            '20:00':
+              description: Example filter by start time at 20:00
+              value: '20:00'
+            '12:00':
+              description: Example filter by start time at 12:00
+              value: '12:00'
+        - name: type
+          description: Filter doctors by the consultation type.
+          required: false
+          in: query
+          schema:
+            type: string
+            minLength: 4
+            maxLength: 50
+          examples:
+            Telekonsultasi:
+              description: Example filter doctors by the consultation type.
+              value: telekonsultasi
+            Tatap Muka:
+              description: Example filter doctors by the consultation type.
+              value: tatap muka
+        - name: gender
+          description: Filter doctors by the gender.
+          required: false
+          in: query
+          schema:
+            type: string
+            minLength: 4
+            maxLength: 50
+          examples:
+            Male:
+              description: Example filter doctors by the gender male
+              value: m
+            Female:
+              description: Example filter doctors by the gender female
+              value: f
+  /hospitals/{hospitalId}/doctors/{doctorId}/schedules:
+    get:
+      tags:
+        - Hospital
+        - Doctor
+      summary: Get All Doctors
+      description: Get list of all Doctors at a specific hospital location by default.
+      responses:
+        '200':
+          description: Get list of all doctors at a specific specialization successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: Doctor Id
+                  fullName:
+                    type: string
+                    description: Doctor full name
+                  specialization:
+                    type: string
+                    description: doctor specialization
+                  subSpecialization:
+                    type: string
+                    description: doctor sub specialization
+                  schedules:
+                    type: array
+                    description: doctor schedules
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        date:
+                          type: string
+                        startTime:
+                          type: string
+                        endTime:
+                          type: string
+                        interval:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              isBooked:
+                                type: boolean
+                              time:
+                                type: string
+              examples:
+                success:
+                  description: Example success get list of all filtered doctor schedules at a specific doctor successfully
+                  value:
+                    id: 1
+                    fullName: dr. Andy Sugoro, Sp.A
+                    specialization: Anak
+                    subSpecialization: null
+                    schedules:
+                      - id: 3
+                        date: '2023-08-28'
+                        startTime: '10:00:00'
+                        endTime: '13:00:00'
+                        interval:
+                          - isBooked: true
+                            time: '10:00'
+                          - isBooked: true
+                            time: '10:30'
+                          - isBooked: true
+                            time: '11:00'
+                          - isBooked: true
+                            time: '11:30'
+                          - isBooked: true
+                            time: '12:00'
+                          - isBooked: true
+                            time: '12:30'
+                      - id: 4
+                        date: '2023-08-29'
+                        startTime: '10:00:00'
+                        endTime: '13:00:00'
+                        interval:
+                          - isBooked: true
+                            time: '10:00'
+                          - isBooked: false
+                            time: '10:30'
+                          - isBooked: true
+                            time: '11:00'
+                          - isBooked: true
+                            time: '11:30'
+                          - isBooked: false
+                            time: '12:00'
+                          - isBooked: false
+                            time: '12:30'
+                      - id: 5
+                        date: '2023-08-30'
+                        startTime: '10:00:00'
+                        endTime: '13:00:00'
+                        interval:
+                          - isBooked: true
+                            time: '10:00'
+                          - isBooked: false
+                            time: '10:30'
+                          - isBooked: false
+                            time: '11:00'
+                          - isBooked: false
+                            time: '11:30'
+                          - isBooked: false
+                            time: '12:00'
+                          - isBooked: false
+                            time: '12:30'
+                      - id: 6
+                        date: '2023-08-31'
+                        startTime: '10:00:00'
+                        endTime: '13:00:00'
+                        interval:
+                          - isBooked: true
+                            time: '10:00'
+                          - isBooked: false
+                            time: '10:30'
+                          - isBooked: false
+                            time: '11:00'
+                          - isBooked: false
+                            time: '11:30'
+                          - isBooked: false
+                            time: '12:00'
+                          - isBooked: false
+                            time: '12:30'
+                      - id: 47
+                        date: '2023-09-01'
+                        startTime: '10:00:00'
+                        endTime: '13:00:00'
+                        interval:
+                          - isBooked: false
+                            time: '10:00'
+                          - isBooked: false
+                            time: '10:30'
+                          - isBooked: false
+                            time: '11:00'
+                          - isBooked: false
+                            time: '11:30'
+                          - isBooked: false
+                            time: '12:00'
+                          - isBooked: false
+                            time: '12:30'
+                      - id: 46
+                        date: '2023-09-02'
+                        startTime: '10:00:00'
+                        endTime: '13:00:00'
+                        interval:
+                          - isBooked: true
+                            time: '10:00'
+                          - isBooked: false
+                            time: '10:30'
+                          - isBooked: false
+                            time: '11:00'
+                          - isBooked: false
+                            time: '11:30'
+                          - isBooked: true
+                            time: '12:00'
+                          - isBooked: false
+                            time: '12:30'
+        '404':
+          description: Failed to get doctors not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              examples:
+                failed:
+                  description: failed to get doctors
+                  value:
+                    message: Doctor not found
+      parameters:
+        - $ref: '#/components/parameters/hospitalId'
+        - name: doctorId
+          description: Doctor Id for retrieving doctor
+          in: path
+          required: true
+          schema:
+            type: integer
+          examples:
+            dr. Andy Sugoro:
+              description: Example doctor Id of dr. Andy Sugoro
+              value: 1
+        - name: start_date
+          description: It is used in collaboration with the endDate query to filter doctor schedules by their practice schedule date range.
+          required: true
+          in: query
+          schema:
+            type: string
+            minLength: 4
+            maxLength: 20
+          examples:
+            '2023-08-29':
+              description: Example filter by start date at 2023-08-29
+              value: '2023-08-29'
+        - name: end_date
+          description: It is used in collaboration with the startDate query to filter doctors schedules by their practice schedule date range.
+          required: true
+          in: query
+          schema:
+            type: string
+            minLength: 4
+            maxLength: 20
+          examples:
+            '2023-09-04':
+              description: Example filter by start time at 2023-09-04
+              value: '2023-09-04'
+  /bookings:
+    get:
+      tags:
+        - Booking
+      summary: Get All Reservations
+      description: Get the list of booking reservations
+      responses:
+        '200':
+          description: Get the list of booking reservations successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingList'
+              examples:
+                success:
+                  description: Get the booking list of the current user successfully
+                  value:
+                    - id: 4
+                      imgUrl: https://www.caredoctor.com/profiles/1
+                      doctor: dr. Andy Sugoro, Sp.A
+                      hospital: Mandaya - Puri
+                      date: '2023-08-29'
+                      time: '12:00'
+                      status: terkonfirmasi
+  /bookings/histories:
+    get:
+      tags:
+        - Booking
+      summary: Get All Reservations
+      description: Get the list of booking reservation histories
+      responses:
+        '200':
+          description: Get the list of booking reservation histories successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingList'
+              examples:
+                success:
+                  description: Get the booking histories of the current user successfully
+                  value:
+                    - id: 4
+                      imgUrl: https://www.caredoctor.com/profiles/1
+                      doctor: dr. Andy Sugoro, Sp.A
+                      hospital: Mandaya - Puri
+                      date: '2023-08-29'
+                      time: '12:00'
+                      status: cancel
+  /bookings/{bookingId}:
+    get:
+      tags:
+        - Booking
+      summary: Get Booking Detail
+      description: Get the detail of booking reservation
+      responses:
+        '200':
+          description: Get the detail of booking reservation successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: reservation id
+                  imgUrl:
+                    type: string
+                    description: The url of doctor's profile picture
+                  fullName:
+                    type: string
+                    description: The name of the patient
+                  doctor:
+                    type: string
+                    description: The name of the doctor
+                  specialization:
+                    type: string
+                    description: The name of doctor's specialization
+                  subSpecialization:
+                    type: string
+                    description: The name of doctor's sub specialization
+                  hospital:
+                    type: string
+                    description: The name of the hospital
+                  date:
+                    type: string
+                    description: The date for the check-up
+                  time:
+                    type: string
+                    description: The time for the check-up
+                  bookingCode:
+                    type: string
+                    description: The code of the current reservation
+                  complaint:
+                    type: string
+                    description: The complaint of patient
+                  status:
+                    type: string
+                    description: The status for the reservation
+              examples:
+                success:
+                  description: Get the booking histories of the current user successfully
+                  value:
+                    - id: 4
+                      imgUrl: https://www.caredoctor.com/profiles/1
+                      fullName: John Doe
+                      doctor: dr. Andy Sugoro, Sp.A
+                      specialization: Anak
+                      subSpecialization: null
+                      hospital: Mandaya - Puri
+                      date: '2023-08-29'
+                      time: '12:00'
+                      bookingCode: '4378544'
+                      complaint: null
+                      status: cancel
+        '404':
+          description: Failed to booking detail not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              examples:
+                failed:
+                  description: failed to booking detail
+                  value:
+                    message: Reservation not found
+      parameters:
+        - name: bookingId
+          description: Booking Id for retrieving reservation
+          in: path
+          required: true
+          schema:
+            type: integer
+          examples:
+            John Doe:
+              description: Example booking Id of John Doe
+              value: 4
+components:
+  parameters:
+    hospitalId:
+      name: hospitalId
+      description: Hospital Id
+      in: path
+      required: true
+      schema:
+        type: integer
+      examples:
+        Puri Hospital:
+          description: Example hospitalId for Puri Hospital
+          value: 1
+        Karawang Hospital:
+          description: Example hospitalId for Karawang Hospital
+          value: 2
+    specializationId:
+      name: specializationId
+      description: Specialization Id
+      in: path
+      required: true
+      schema:
+        type: integer
+      examples:
+        Anak:
+          description: Example specializationId for Pediatric specialization
+          value: 1
+        Mata:
+          description: Example specializationId for Ophthalmology
+          value: 2
+  schemas:
+    DoctorList:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            description: Doctor Id
+          imgUrl:
+            type: string
+            description: The url of doctor's profile picture
+          fullName:
+            type: string
+            description: Doctor full name
+          specialization:
+            type: string
+            description: doctor specialization
+          subSpecialization:
+            type: string
+            description: doctor sub specialization
+          schedules:
+            type: array
+            description: doctor schedules
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                date:
+                  type: string
+                startTime:
+                  type: string
+                endTime:
+                  type: string
+    BookingList:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            description: reservation id
+          imgUrl:
+            type: string
+            description: The url of doctor's profile picture
+          doctor:
+            type: string
+            description: The name of the doctor
+          hospital:
+            type: string
+            description: The name of the hospital
+          date:
+            type: string
+            description: The date for the check-up
+          time:
+            type: string
+            description: The time for the check-up
+          status:
+            type: string
+            description: The status for the reservation
+  examples:
+    DoctorList:
+      description: Example success get list of all filtered doctors at a specific specialization successfully
+      value:
+        - id: 1
+          imgUrl: https://www.caredoctor.com/profiles/1
+          fullName: dr. Andy Sugoro, Sp.A
+          specialization: Anak
+          subSpecialization: null
+          schedules:
+            - id: 3
+              date: '2023-08-28'
+              startTime: '10:00:00'
+              endTime: '13:00:00'
+            - id: 4
+              date: '2023-08-29'
+              startTime: '10:00:00'
+              endTime: '13:00:00'
+            - id: 5
+              date: '2023-08-30'
+              startTime: '10:00:00'
+              endTime: '13:00:00'
+            - id: 6
+              date: '2023-08-31'
+              startTime: '10:00:00'
+              endTime: '13:00:00'
+            - id: 47
+              date: '2023-09-01'
+              startTime: '10:00:00'
+              endTime: '13:00:00'
+            - id: 46
+              date: '2023-09-02'
+              startTime: '10:00:00'
+              endTime: '13:00:00'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
