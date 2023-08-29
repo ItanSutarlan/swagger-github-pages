@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Care Doctor RESTful API
-  description: The API endpoints that use the HTTP GET methods for making reservations
+  description: The API endpoints that use the HTTP GET method for making reservations
   version: '1'
   contact:
     name: Itan Sutarlan
